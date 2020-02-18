@@ -1,0 +1,8 @@
+post http://localhost:3001/posts
+Content-Type: application/json
+
+{
+"name": "feelgood",
+"description": "home",
+"location": "Budapest"
+}
