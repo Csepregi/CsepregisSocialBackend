@@ -1,11 +1,36 @@
 const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
+const mongoose = require('mongoose')
 const cors = require('cors')
 app.use(cors())
 
 app.use(bodyParser.json())
 app.use(express.static('build'))
+
+const url =
+	'mongodb+srv://gabor:hangfive2019@csepregis-7katb.mongodb.net/react?retryWrites=true&w=majority'
+
+mongoose.connect(url, { useNewUrlParser: true })
+
+const postSchema = new mongoose.Schema({
+	name: String,
+	description: String,
+	location: String,
+	date: Date,
+})
+
+postSchema.set('toJSON', {
+	transform: (document, returnedObject) => {
+		returnedObject.id = returnedObject._id.toString()
+		delete returnedObject._id
+		delete returnedObject.__v
+	}
+})
+
+
+
+const Post = mongoose.model('Post', postSchema)
 
 let posts = [
 	{
@@ -38,12 +63,14 @@ const generateId = () => {
 	return maxId + 1
 }
 
-app.get('/api/posts', (req, res) => {
+app.get('/', (req, res) => {
 	res.send('<h1>Hello World</h1>')
 })
 
 app.get('/api/posts', (req, res) => {
-	res.json(posts)
+	Post.find({}).then(posts => {
+		res.json(posts.map(post => post.toJSON()))
+	})
 })
 
 app.get('/api/posts/:id', (req, res) => {
@@ -56,7 +83,7 @@ app.get('/api/posts/:id', (req, res) => {
 	}
 })
 
-app.post('/posts', (req, res) => {
+app.post('/api/posts', (req, res) => {
 	const body = req.body
 
 	if (!body.name) {
@@ -65,18 +92,17 @@ app.post('/posts', (req, res) => {
 		})
 	}
 
-	const post = {
+	const post = new Post({
 		name: body.name,
 		description: body.description,
 		location: body.location,
 		date: new Date(),
 		id: generateId(),
-	}
+	})
 
-	posts = posts.concat(post)
-	console.log(typeof body.description)
-	console.log(post)
-	res.json(post)
+	post.save().then(savedPost => {
+		res.json(savedPost.toJSON())
+	})
 })
 
 app.delete('/posts/:id', (req, res) => {

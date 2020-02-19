@@ -1,8 +1,8 @@
-post http://localhost:3001/posts
+post http://localhost:3001/api/posts
 Content-Type: application/json
 
 {
-"name": "feelgood",
+"name": "second-home",
 "description": "home",
-"location": "Budapest"
+"location": "Palermo"
 }
