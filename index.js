@@ -38,15 +38,15 @@ const generateId = () => {
 	return maxId + 1
 }
 
-app.get('/', (req, res) => {
+app.get('/api/posts', (req, res) => {
 	res.send('<h1>Hello World</h1>')
 })
 
-app.get('/posts', (req, res) => {
+app.get('/api/posts', (req, res) => {
 	res.json(posts)
 })
 
-app.get('/posts/:id', (req, res) => {
+app.get('/api/posts/:id', (req, res) => {
 	const id = Number(req.params.id)
 	const post = posts.find(post => post.id === id)
 	if (post) {
