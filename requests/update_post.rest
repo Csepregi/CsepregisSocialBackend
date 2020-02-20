@@ -1,0 +1,9 @@
+put http://localhost:3001/api/places/5e4ea8cd1646451a68544309
+Content-Type: application/json
+
+{
+"name": "Home Sweet Home", 
+"description": "sweet",
+"location": "Chicago",
+"important": true
+}

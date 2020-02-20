@@ -1,118 +1,95 @@
 const express = require('express')
 const app = express()
+require('dotenv').config()
 const bodyParser = require('body-parser')
-const mongoose = require('mongoose')
-const cors = require('cors')
-app.use(cors())
+
+const Place = require('./models/place')
 
 app.use(bodyParser.json())
-app.use(express.static('build'))
+const cors = require('cors')
 
-const url =
-	'mongodb+srv://gabor:hangfive2019@csepregis-7katb.mongodb.net/react?retryWrites=true&w=majority'
+app.use(cors())
 
-mongoose.connect(url, { useNewUrlParser: true })
-
-const postSchema = new mongoose.Schema({
-	name: String,
-	description: String,
-	location: String,
-	date: Date,
-})
-
-postSchema.set('toJSON', {
-	transform: (document, returnedObject) => {
-		returnedObject.id = returnedObject._id.toString()
-		delete returnedObject._id
-		delete returnedObject.__v
-	}
-})
-
-
-
-const Post = mongoose.model('Post', postSchema)
-
-let posts = [
-	{
-		id: 1,
-		name: "HTML is easy",
-		description: "hello",
-		location: "Budapest",
-		date: "2019-05-30T19:20:14.298Z"
-	},
-	{
-		id: 2,
-		name: "Browser can execute only Javascript",
-		description: "hello",
-		location: "Roma",
-		date: "2019-05-30T18:39:34.091Z"
-	},
-	{
-		id: 3,
-		name: "GET and POST are the most important methods of HTTP protocol",
-		description: "hello",
-		location: "Matera",
-		date: "2019-05-30T19:20:14.298Z"
-	}
-]
-
-const generateId = () => {
-	const maxId = posts.length > 0
-		? Math.max(...posts.map(n => n.id))
-		: 0
-	return maxId + 1
+const requestLogger = (request, response, next) => {
+	console.log('Method:', request.method)
+	console.log('Path:  ', request.path)
+	console.log('Body:  ', request.body)
+	console.log('---')
+	next()
 }
 
+app.use(requestLogger)
+
+
+app.use(express.static('build'))
+
 app.get('/', (req, res) => {
-	res.send('<h1>Hello World</h1>')
+	res.send('<h1>Hello World!</h1>')
 })
 
-app.get('/api/posts', (req, res) => {
-	Post.find({}).then(posts => {
-		res.json(posts.map(post => post.toJSON()))
-	})
-})
+app.post('/api/places', async (request, response) => {
+	const body = request.body
 
-app.get('/api/posts/:id', (req, res) => {
-	const id = Number(req.params.id)
-	const post = posts.find(post => post.id === id)
-	if (post) {
-		res.json(post)
-	} else {
-		res.status(404).end()
-	}
-})
-
-app.post('/api/posts', (req, res) => {
-	const body = req.body
-
-	if (!body.name) {
-		return res.status(400).json({
-			error: 'content missing'
-		})
+	if (body.name === undefined) {
+		return response.status(400).json({ error: 'content missing' })
 	}
 
-	const post = new Post({
+	const place = new Place({
 		name: body.name,
 		description: body.description,
 		location: body.location,
+		important: body.important || false,
 		date: new Date(),
-		id: generateId(),
 	})
 
-	post.save().then(savedPost => {
-		res.json(savedPost.toJSON())
-	})
+	const savedNote = await place.save()
+	response.json(savedNote.toJSON())
 })
 
-app.delete('/posts/:id', (req, res) => {
-	const id = Number(req.params.id)
-	posts = posts.filter(post => post.id !== id)
-
-	res.status(204).end()
+app.get('/api/places', async (request, response) => {
+	const places = await Place.find({})
+	response.json(places.map(place => place.toJSON()))
 })
 
-const PORT = process.env.PORT || 3001
+app.get('/api/places/:id', async (request, response) => {
+	const place = await Place.findById(request.params.id)
+	response.json(place.toJSON())
+})
+
+app.delete('/api/places/:id', async (request, response, next) => {
+	const id = Number(request.params.id)
+	try {
+		await Note.findByIdAndRemove(id)
+		response.status(204).end()
+	} catch (e) {
+		next(e)
+	}
+})
+
+app.put('/api/places/:id', (request, response, next) => {
+	const body = request.body
+
+	const place = {
+		name: body.name,
+		description: body.description,
+		location: body.location
+	}
+
+	Place.findByIdAndUpdate(request.params.id, place, { new: true })
+		.then(updatedNote => {
+			response.json(updatedNote.toJSON())
+		})
+		.catch(error => next(error))
+})
+
+const unknownEndpoint = (request, response) => {
+	response.status(404).send({ error: 'unknown endpoint' })
+}
+
+app.use(unknownEndpoint)
+
+const PORT = process.env.PORT
+
 app.listen(PORT, () => {
 	console.log(`Server running on port ${PORT}`)
 })
