@@ -37,7 +37,7 @@ placesRouter.get('/api/places/:id', async (request, response) => {
 placesRouter.delete('/api/places/:id', async (request, response, next) => {
 	const id = Number(request.params.id)
 	try {
-		await Note.findByIdAndRemove(id)
+		await Place.findByIdAndRemove(id)
 		response.status(204).end()
 	} catch (e) {
 		next(e)
@@ -59,9 +59,5 @@ placesRouter.put('/api/places/:id', (request, response, next) => {
 		})
 		.catch(error => next(error))
 })
-
-const unknownEndpoint = (request, response) => {
-	response.status(404).send({ error: 'unknown endpoint' })
-}
 
 module.exports = placesRouter
