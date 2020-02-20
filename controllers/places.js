@@ -1,8 +1,9 @@
 const placesRouter = require('express').Router()
 const Place = require('../models/place')
 
-placesRouter.get('/', (req, res) => {
-	res.send('<h1>Hello World!</h1>')
+placesRouter.get('/', async (request, response) => {
+	const places = await Place.find({})
+	response.json(places.map(place => place.toJSON()))
 })
 
 placesRouter.post('/api/places', async (request, response) => {
@@ -24,17 +25,13 @@ placesRouter.post('/api/places', async (request, response) => {
 	response.json(savedNote.toJSON())
 })
 
-placesRouter.get('/api/places', async (request, response) => {
-	const places = await Place.find({})
-	response.json(places.map(place => place.toJSON()))
-})
 
-placesRouter.get('/api/places/:id', async (request, response) => {
+placesRouter.get('/:id', async (request, response) => {
 	const place = await Place.findById(request.params.id)
 	response.json(place.toJSON())
 })
 
-placesRouter.delete('/api/places/:id', async (request, response, next) => {
+placesRouter.delete('/:id', async (request, response, next) => {
 	const id = Number(request.params.id)
 	try {
 		await Place.findByIdAndRemove(id)
@@ -44,7 +41,7 @@ placesRouter.delete('/api/places/:id', async (request, response, next) => {
 	}
 })
 
-placesRouter.put('/api/places/:id', (request, response, next) => {
+placesRouter.put('/:id', (request, response, next) => {
 	const body = request.body
 
 	const place = {
