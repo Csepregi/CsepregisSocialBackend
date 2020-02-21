@@ -1,9 +1,8 @@
-post http://localhost:3001/api/notes
+post http://localhost:3001/api/places
 Content-Type: application/json
 
 {
-"name": "Home", 
+"name": "dddd", 
 "description": "sweet",
-"location": "Budapest",
-"important": true
+"location": "Budapest"
 }

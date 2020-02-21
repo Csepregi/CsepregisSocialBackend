@@ -4,8 +4,7 @@ mongoose.set('useFindAndModify', false)
 const placeSchema = new mongoose.Schema({
 	name: String,
 	description: String,
-	location: String,
-	important: Boolean,
+	location: String
 })
 
 placeSchema.set('toJSON', {

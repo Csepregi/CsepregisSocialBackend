@@ -6,7 +6,7 @@ placesRouter.get('/', async (request, response) => {
 	response.json(places.map(place => place.toJSON()))
 })
 
-placesRouter.post('/api/places', async (request, response) => {
+placesRouter.post('/', async (request, response) => {
 	const body = request.body
 
 	if (body.name === undefined) {
@@ -17,12 +17,11 @@ placesRouter.post('/api/places', async (request, response) => {
 		name: body.name,
 		description: body.description,
 		location: body.location,
-		important: body.important || false,
 		date: new Date(),
 	})
 
-	const savedNote = await place.save()
-	response.json(savedNote.toJSON())
+	const savedPlace = await place.save()
+	response.json(savedPlace.toJSON())
 })
 
 
