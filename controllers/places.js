@@ -6,7 +6,7 @@ placesRouter.get('/', async (request, response) => {
 	response.json(places.map(place => place.toJSON()))
 })
 
-placesRouter.post('/', async (request, response) => {
+placesRouter.post('/', async (request, response, next) => {
 	const body = request.body
 
 	if (body.name === undefined) {
@@ -20,20 +20,32 @@ placesRouter.post('/', async (request, response) => {
 		date: new Date(),
 	})
 
-	const savedPlace = await place.save()
-	response.json(savedPlace.toJSON())
+	try {
+		const savedPlace = await place.save()
+		response.json(savedPlace.toJSON())
+	} catch (exception) {
+		next(exception)
+	}
 })
 
 
-placesRouter.get('/:id', async (request, response) => {
-	const place = await Place.findById(request.params.id)
-	response.json(place.toJSON())
+placesRouter.get('/:id', async (request, response, next) => {
+	try {
+		const place = await Place.findById(request.params.id)
+		if (place) {
+			response.json(place.toJSON())
+		} else {
+			response.status(404).end()
+		}
+	} catch (exception) {
+		next(exception)
+	}
 })
+
 
 placesRouter.delete('/:id', async (request, response, next) => {
-	const id = Number(request.params.id)
 	try {
-		await Place.findByIdAndRemove(id)
+		await Place.findByIdAndRemove(request.params.id)
 		response.status(204).end()
 	} catch (e) {
 		next(e)
