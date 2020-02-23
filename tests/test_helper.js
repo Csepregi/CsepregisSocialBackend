@@ -1,4 +1,5 @@
 const Place = require('../models/place')
+const User = require('../models/user')
 
 const initialPlaces = [
 	{
@@ -26,6 +27,14 @@ const placesInDb = async () => {
 	return places.map(place => place.toJSON())
 }
 
+const usersInDb = async () => {
+	const users = await User.find({})
+	return users.map(u => u.toJSON())
+}
+
 module.exports = {
-	initialPlaces, nonExistingId, placesInDb
+	initialPlaces,
+	nonExistingId,
+	placesInDb,
+	usersInDb
 }

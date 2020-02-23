@@ -2,9 +2,16 @@ const mongoose = require('mongoose')
 mongoose.set('useFindAndModify', false)
 
 const placeSchema = new mongoose.Schema({
-	name: String,
+	name: {
+		type: String,
+		required: true
+	},
 	description: String,
-	location: String
+	location: String,
+	user: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'User'
+	}
 })
 
 placeSchema.set('toJSON', {

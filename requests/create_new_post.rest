@@ -1,8 +1,10 @@
 post http://localhost:3001/api/places
 Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBhbGlua2EiLCJpZCI6IjVlNTI2ZGU4NGQxYzQ3MzVkNDI1ZGQ0NSIsImlhdCI6MTU4MjQ3MzIwNH0.E5oSP76PzKaMa5O_HeacXF6Cay-R4VNAMvhJh_MLPU0
 
 {
-"name": "dddd", 
-"description": "sweet",
-"location": "Budapest"
+"name": "sleeping", 
+"description": "uscita",
+"location": "Castle",
+"userId": "5e526de84d1c4735d425dd45"
 }
