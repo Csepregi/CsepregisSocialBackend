@@ -1,0 +1,7 @@
+POST http://localhost:3001/api/places/5e80c89aa9112142dcde5c42/comments
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImdhYm9yIiwiaWQiOiI1ZTUxMGMzODE5YTYwODRhYzRhNzRlYTYiLCJpYXQiOjE1ODU1MDk1NTV9.J1xjQOEEX07GBee6FFBPHszq2Gosq-QogcjfBK4lIFc
+
+{
+"comments": "bello"
+}

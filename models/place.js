@@ -8,10 +8,19 @@ const placeSchema = new mongoose.Schema({
 	},
 	description: String,
 	location: String,
+	likes: Number,
 	user: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'User'
-	}
+	},
+	comments: [String],
+	images: [{ image: String, imageId: String }],
+	// comments: [
+	// 	{
+	// 		type: mongoose.Schema.Types.ObjectId,
+	// 		ref: "Comment"
+	// 	}
+	// ]
 })
 
 placeSchema.set('toJSON', {
